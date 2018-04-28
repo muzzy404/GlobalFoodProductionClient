@@ -36,11 +36,15 @@ public class PieFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
     private PieChart pieChart;
-    private Spinner counrySpinner;
+
+    private Spinner countrySpinner;
+    private Spinner yearsSpinner;
 
     ArrayAdapter<String> countriesAdapter;
+    ArrayAdapter<String> yearsAdapter;
 
     private String selectedCountry;
+    private String selectedYear;
 
     public PieFragment() {
         // Required empty public constructor
@@ -69,7 +73,7 @@ public class PieFragment extends Fragment {
         for(Pair<String, Float> item : dataRaw) {
             entries.add(new PieEntry(item.second, item.first));
         }
-        PieDataSet pieDataSet = new PieDataSet(entries, country);
+        PieDataSet pieDataSet = new PieDataSet(entries, "");
 
         ArrayList<Integer> colors = new ArrayList<Integer>();
         for(int c : ColorTemplate.COLORFUL_COLORS)
@@ -100,7 +104,16 @@ public class PieFragment extends Fragment {
                 android.R.layout.simple_spinner_item,
                 DataProvider.getCountries());
         countriesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        counrySpinner.setAdapter(countriesAdapter);
+        countrySpinner.setAdapter(countriesAdapter);
+    }
+
+    private void updateYears() {
+        yearsAdapter = new ArrayAdapter<String>(
+                getContext(),
+                android.R.layout.simple_spinner_item,
+                DataProvider.getYears());
+        yearsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        yearsSpinner.setAdapter(yearsAdapter);
     }
 
     @Override
@@ -112,16 +125,18 @@ public class PieFragment extends Fragment {
         pieChart = view.findViewById(R.id.pie_chart_view);
         updateChart();
 
-        counrySpinner = view.findViewById(R.id.countries_spinner);
+        countrySpinner = view.findViewById(R.id.countries_spinner_pie);
+        yearsSpinner = view.findViewById(R.id.years_spinner_pie);
+
         updateCountries();
 
-        counrySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        countrySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 selectedCountry = adapterView.getItemAtPosition(i).toString();
-                //updateYears(selectedCountry);
-                /*Toast.makeText(getContext(), adapterView.getItemAtPosition(i).toString(),
-                        Toast.LENGTH_SHORT).show();*/
+                updateYears();
+                Toast.makeText(getContext(), adapterView.getItemAtPosition(i).toString(),
+                        Toast.LENGTH_SHORT).show();
             }
 
             @Override

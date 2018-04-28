@@ -70,4 +70,8 @@ public class DataProvider {
         return new ArrayList<String>(Arrays.asList(allCountries));
     }
 
+    static ArrayList<String> getYears() {
+        return new ArrayList<String>(Arrays.asList("1111", "2222", "3333"));
+    }
+
 }
