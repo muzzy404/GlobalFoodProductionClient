@@ -9,4 +9,5 @@
     <item type="id" name="map_chart_item"/>
 
     <item type="id" name="countries_spinner"/>
+    <item type="id" name="pie_chart_view"/>
 </resources>
