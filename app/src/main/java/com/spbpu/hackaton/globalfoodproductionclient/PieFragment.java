@@ -10,7 +10,8 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
@@ -33,6 +34,9 @@ public class PieFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
     private PieChart pieChart;
+    private Spinner counrySpinner;
+
+    ArrayAdapter<String> countriesAdapter;
 
     public PieFragment() {
         // Required empty public constructor
@@ -86,15 +90,27 @@ public class PieFragment extends Fragment {
         pieChart.invalidate();
     }
 
+    private void updateCountries() {
+        countriesAdapter = new ArrayAdapter<String>(
+                getContext(),
+                android.R.layout.simple_spinner_item,
+                DataProvider.getCountries());
+        countriesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        counrySpinner.setAdapter(countriesAdapter);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         Log.d("Dasha", "onCreateView");
         View view = inflater.inflate(R.layout.fragment_pie, container, false);
-        pieChart = (PieChart) view.findViewById(R.id.pie_chart_view);
 
+        pieChart = view.findViewById(R.id.pie_chart_view);
         updateChart();
+
+        counrySpinner = view.findViewById(R.id.countries_spinner);
+        updateCountries();
 
         return view;
     }

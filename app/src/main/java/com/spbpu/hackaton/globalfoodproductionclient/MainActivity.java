@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         btmNavigation.setSelectedItemId(R.id.map_chart_item);
+        DataProvider.updateCountries(this);
     }
 
     @Override
