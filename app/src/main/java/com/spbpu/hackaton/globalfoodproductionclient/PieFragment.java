@@ -1,6 +1,7 @@
 package com.spbpu.hackaton.globalfoodproductionclient;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -53,15 +54,13 @@ public class PieFragment extends Fragment {
 
         ArrayList<Pair<String, Float>> dataRaw = DataProvider.getPieChartData(country);
 
-        ArrayList<PieEntry> yEntrys = new ArrayList<>();
-        ArrayList<String> xEntrys = new ArrayList<>();
+        ArrayList<PieEntry> entries = new ArrayList<>();
 
         int i = 0;
         for(Pair<String, Float> item : dataRaw) {
-            yEntrys.add(new PieEntry(item.second));
-            xEntrys.add(item.first);
+            entries.add(new PieEntry(item.second, item.first));
         }
-        PieDataSet pieDataSet = new PieDataSet(yEntrys, country);
+        PieDataSet pieDataSet = new PieDataSet(entries, country);
 
         ArrayList<Integer> colors = new ArrayList<Integer>();
         for(int c : ColorTemplate.COLORFUL_COLORS)
@@ -70,9 +69,17 @@ public class PieFragment extends Fragment {
         pieDataSet.setColors(colors);
 
         PieData data = new PieData(pieDataSet);
-        //data.setValueTextColor(Color.WHITE);
+        data.setValueTextColor(Color.WHITE);
 
         Log.d("Dasha", (pieChart == null ? "NULL" : "OK"));
+        pieChart.getDescription().setEnabled(false);
+        pieChart.setUsePercentValues(true);
+        pieChart.setCenterText(country);
+        pieChart.setCenterTextColor(Color.BLACK);
+
+        pieChart.setHoleRadius(35f);
+        pieChart.setTransparentCircleRadius(40f);
+
         pieChart.setData(data);
         pieChart.invalidate();
     }

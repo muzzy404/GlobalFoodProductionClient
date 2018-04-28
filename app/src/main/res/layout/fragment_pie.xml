@@ -20,14 +20,6 @@
         android:layout_height="match_parent"
         android:layout_margin="@dimen/default_fragment_margin"
         android:layout_weight="1">
-
     </com.github.mikephil.charting.charts.PieChart>
-
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="Pie fragment" />
 
 </LinearLayout>
