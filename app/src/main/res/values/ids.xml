@@ -2,4 +2,9 @@
 <resources>
     <item type="id" name="main_toolbar"/>
     <item type="id" name="toolbar_main_refresh"/>
+    <item type="id" name="btm_nav_view"/>
+
+    <item type="id" name="content"/>
+    <item type="id" name="pie_chart_item"/>
+    <item type="id" name="map_chart_item"/>
 </resources>
