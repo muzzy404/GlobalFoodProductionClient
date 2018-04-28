@@ -6,4 +6,5 @@
     
     <color name="colorNotSelected">#BDBDBD</color>
     <color name="colorBkGround">#EEEEEE</color>
+    <color name="colorWhite">#ffffff</color>
 </resources>

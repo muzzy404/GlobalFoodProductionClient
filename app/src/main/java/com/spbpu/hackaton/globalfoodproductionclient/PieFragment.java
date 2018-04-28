@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
@@ -79,6 +80,7 @@ public class PieFragment extends Fragment {
 
         pieChart.setHoleRadius(35f);
         pieChart.setTransparentCircleRadius(40f);
+        pieChart.animateY(1_000, Easing.EasingOption.EaseInOutCubic);
 
         pieChart.setData(data);
         pieChart.invalidate();
@@ -112,7 +114,7 @@ public class PieFragment extends Fragment {
         } else {
             /*throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");*/
-            Toast.makeText(context, "Pie fragment on attach", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, "Pie fragment on attach", Toast.LENGTH_SHORT).show();
         }
     }
 
