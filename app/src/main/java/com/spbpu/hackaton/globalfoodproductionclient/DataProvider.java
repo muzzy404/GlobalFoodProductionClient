@@ -18,36 +18,62 @@ import java.util.Arrays;
 
 public class DataProvider {
 
-    static private final String URL_GET_ALL = "allCountries";
+    static private final String URL_GET_ALL_COUNTRIES = "allCountries";
+    static private final String URL_GET_ALL_YEARS     = "years";
     static private final String URL = "http://10.20.0.95:8090/";
+    //static private final String URL = "http://10.20.0.132:8090/";
 
     private static String[] allCountries = {};
+    private static String[] allYears     = {"none"};
 
+    private static final int COUNTRIES = 0;
+    private static final int YEARS     = 1;
 
-    static ArrayList<Pair<String, Float>> getPieChartData(String counry) {
+    static ArrayList<Pair<String, Float>> getPieChartData(String country, boolean firstTime) {
         ArrayList<Pair<String, Float>> chartData = new ArrayList<>();
 
-        // TODO: get from server
-        chartData.add(new Pair<String, Float>("Rise", 500f));
-        chartData.add(new Pair<String, Float>("Ice cream", 150f));
-        chartData.add(new Pair<String, Float>("Lollipop", 350f));
-        chartData.add(new Pair<String, Float>("Others", 10f));
+        if (firstTime) {
+            chartData.add(new Pair<String, Float>("No data", 1f));
+        } else { // TODO: get from server
+            chartData.add(new Pair<String, Float>("One", 1f));
+            chartData.add(new Pair<String, Float>("Two", 2f));
+            chartData.add(new Pair<String, Float>("Five", 5f));
+        }
 
         return chartData;
     }
 
     static void updateCountries(Context context) {
-        ArrayList<String> countries = new ArrayList<>();
+        update(context, URL_GET_ALL_COUNTRIES, "", COUNTRIES);
+    }
+
+    static private void update(final Context context,
+                               String url_request, String params,
+                               final int which) {
+        final String reqString = URL + url_request + params;
+        Toast.makeText(context, "URL: " + reqString, Toast.LENGTH_SHORT).show();
 
         StringRequest getRequest = new StringRequest(
                 Request.Method.GET,
-                URL + URL_GET_ALL,
+                reqString,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         String tmp = response;
-                        allCountries = tmp.replaceAll("\\[|\\]|\"","")
-                                .split(",");
+                        switch (which) {
+                            case YEARS: {
+                                allYears = tmp.replaceAll("\\[|\\]|\"", "")
+                                        .split(",");
+                                Toast.makeText(context, "YEAR GETTED", Toast.LENGTH_SHORT).show();
+                            }
+                            break;
+
+                            case COUNTRIES: {
+                                allCountries = tmp.replaceAll("\\[\"|\"\\]", "")
+                                        .split("\",\"");
+                            }
+                            break;
+                        }
                     }
                 },
                 new Response.ErrorListener() {
@@ -67,11 +93,15 @@ public class DataProvider {
     }
 
     static ArrayList<String> getCountries() {
-        return new ArrayList<String>(Arrays.asList(allCountries));
+        ArrayList<String> c = new ArrayList<>(Arrays.asList("none"));
+        c.addAll(Arrays.asList(allCountries));
+        return c;
     }
 
-    static ArrayList<String> getYears() {
-        return new ArrayList<String>(Arrays.asList("1111", "2222", "3333"));
+    static ArrayList<String> getYears(Context context, String params) {
+        //Toast.makeText(context, "Start years search", Toast.LENGTH_SHORT).show();
+        update(context, URL_GET_ALL_YEARS, params, YEARS);
+        return new ArrayList<String>(Arrays.asList(allYears));
     }
 
 }

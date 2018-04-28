@@ -43,8 +43,10 @@ public class PieFragment extends Fragment {
     ArrayAdapter<String> countriesAdapter;
     ArrayAdapter<String> yearsAdapter;
 
-    private String selectedCountry;
-    private String selectedYear;
+    private final static String NULL_STRING = "none";
+
+    private String selectedCountry = "Select country and year";
+    private String selectedYear = NULL_STRING;
 
     public PieFragment() {
         // Required empty public constructor
@@ -60,12 +62,12 @@ public class PieFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
-    private void updateChart() {
+    private void updateChart(boolean first) {
         // TODO: get from spinner
         Log.d("Dasha", "update chart");
-        String country = new String("Russia");
+        String country = selectedCountry;
 
-        ArrayList<Pair<String, Float>> dataRaw = DataProvider.getPieChartData(country);
+        ArrayList<Pair<String, Float>> dataRaw = DataProvider.getPieChartData(country, first);
 
         ArrayList<PieEntry> entries = new ArrayList<>();
 
@@ -111,7 +113,7 @@ public class PieFragment extends Fragment {
         yearsAdapter = new ArrayAdapter<String>(
                 getContext(),
                 android.R.layout.simple_spinner_item,
-                DataProvider.getYears());
+                DataProvider.getYears(getContext(), "?country=" + selectedCountry));
         yearsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         yearsSpinner.setAdapter(yearsAdapter);
     }
@@ -123,7 +125,7 @@ public class PieFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_pie, container, false);
 
         pieChart = view.findViewById(R.id.pie_chart_view);
-        updateChart();
+        updateChart(true);
 
         countrySpinner = view.findViewById(R.id.countries_spinner_pie);
         yearsSpinner = view.findViewById(R.id.years_spinner_pie);
@@ -136,6 +138,24 @@ public class PieFragment extends Fragment {
                 selectedCountry = adapterView.getItemAtPosition(i).toString();
                 updateYears();
                 Toast.makeText(getContext(), adapterView.getItemAtPosition(i).toString(),
+                        Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        yearsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedYear = adapterView.getItemAtPosition(i).toString();
+                if (!selectedCountry.equals(NULL_STRING) ||
+                        !selectedYear.equals(NULL_STRING) ||
+                        !selectedYear.equals(""))
+                    updateChart(false);
+                Toast.makeText(getContext(), selectedCountry + " " + selectedYear,
                         Toast.LENGTH_SHORT).show();
             }
 
