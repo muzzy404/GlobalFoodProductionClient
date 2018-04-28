@@ -10,8 +10,10 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
@@ -37,6 +39,8 @@ public class PieFragment extends Fragment {
     private Spinner counrySpinner;
 
     ArrayAdapter<String> countriesAdapter;
+
+    private String selectedCountry;
 
     public PieFragment() {
         // Required empty public constructor
@@ -103,7 +107,6 @@ public class PieFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        Log.d("Dasha", "onCreateView");
         View view = inflater.inflate(R.layout.fragment_pie, container, false);
 
         pieChart = view.findViewById(R.id.pie_chart_view);
@@ -111,6 +114,21 @@ public class PieFragment extends Fragment {
 
         counrySpinner = view.findViewById(R.id.countries_spinner);
         updateCountries();
+
+        counrySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                selectedCountry = adapterView.getItemAtPosition(i).toString();
+                //updateYears(selectedCountry);
+                /*Toast.makeText(getContext(), adapterView.getItemAtPosition(i).toString(),
+                        Toast.LENGTH_SHORT).show();*/
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         return view;
     }

@@ -48,7 +48,6 @@ public class DataProvider {
                         String tmp = response;
                         allCountries = tmp.replaceAll("\\[|\\]|\"","")
                                 .split(",");
-                        Log.d("Dasha", allCountries[0]);
                     }
                 },
                 new Response.ErrorListener() {
