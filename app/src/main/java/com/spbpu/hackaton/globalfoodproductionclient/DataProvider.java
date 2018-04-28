@@ -46,7 +46,8 @@ public class DataProvider {
                     @Override
                     public void onResponse(String response) {
                         String tmp = response;
-                        allCountries = tmp.split(",");
+                        allCountries = tmp.replaceAll("\\[|\\]|\"","")
+                                .split(",");
                         Log.d("Dasha", allCountries[0]);
                     }
                 },
