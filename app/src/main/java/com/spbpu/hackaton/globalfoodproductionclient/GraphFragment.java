@@ -85,9 +85,21 @@ public class GraphFragment extends Fragment {
             entries.add(new Entry(dataX++, Float.valueOf(data)));
         }
 
-        LineDataSet dataSet = new LineDataSet(entries, "Label");
+        LineDataSet dataSet = new LineDataSet(entries, "Distribution");
+
+        dataSet.setDrawValues(false);
+        dataSet.setLineWidth(2f);
+        dataSet.setDrawCircles(false);
 
         LineData lineData = new LineData(dataSet);
+
+        lineChart.getAxisRight().setDrawGridLines(false);
+        lineChart.getAxisLeft().setDrawGridLines(false);
+        lineChart.getXAxis().setDrawGridLines(false);
+        lineChart.setDrawBorders(false);
+        lineChart.getLegend().setEnabled(false);
+        lineChart.setBackgroundColor(getResources().getColor(R.color.colorWhite));
+
         lineChart.setData(lineData);
         lineChart.invalidate(); // refresh
     }

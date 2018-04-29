@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
@@ -98,6 +99,8 @@ public class PieFragment extends Fragment {
         pieChart.setHoleRadius(35f);
         pieChart.setTransparentCircleRadius(40f);
         pieChart.animateY(1_000, Easing.EasingOption.EaseInOutCubic);
+        pieChart.setDrawEntryLabels(false);
+        pieChart.getLegend().setOrientation(Legend.LegendOrientation.VERTICAL);
 
         pieChart.setData(data);
         pieChart.invalidate();
