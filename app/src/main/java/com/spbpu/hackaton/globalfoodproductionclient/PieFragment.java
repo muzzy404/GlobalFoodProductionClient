@@ -45,8 +45,6 @@ public class PieFragment extends Fragment {
 
     private final static String NULL_STRING = "none";
 
-    //private String selectedCountry = "Select country and year";
-    //private String selectedYear = NULL_STRING;
     private String selectedCountry = "Albania";
     private String selectedYear = NULL_STRING;
 
@@ -69,7 +67,10 @@ public class PieFragment extends Fragment {
         Log.d("Dasha", "update chart");
         String country = selectedCountry;
 
-        ArrayList<Pair<String, Float>> dataRaw = DataProvider.getPieChartData(country, first);
+        Log.d("<DASHA>", "updateChart");
+        ArrayList<Pair<String, Float>> dataRaw = DataProvider.getPieChartData(country, selectedYear, first, getContext());
+
+        if(dataRaw.isEmpty()) Log.d("<NIKA> : ", "is Empty");
 
         ArrayList<PieEntry> entries = new ArrayList<>();
 
@@ -136,11 +137,11 @@ public class PieFragment extends Fragment {
         //Nika's code
         updateYears();
         updateCountries();
-        Toast.makeText(getContext(), "NIKA : update C",
+        /*Toast.makeText(getContext(), "NIKA : update C",
                 Toast.LENGTH_SHORT).show();
         updateYears();
         Toast.makeText(getContext(), "NIKA : update Y",
-                Toast.LENGTH_SHORT).show();
+                Toast.LENGTH_SHORT).show();*/
         //end of Nika's code
 
         countrySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -162,17 +163,16 @@ public class PieFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 selectedYear = adapterView.getItemAtPosition(i).toString();
-                if (!selectedCountry.equals(NULL_STRING) ||
+                /*if (!selectedCountry.equals(NULL_STRING) ||
                         !selectedYear.equals(NULL_STRING) ||
                         !selectedYear.equals(""))
                     updateChart(false);
                 // Nika's code
                 if (selectedYear.equals(NULL_STRING) || selectedCountry.equals(NULL_STRING))
                     pieChart.clear();
-
                 // end Nika's code
-                Toast.makeText(getContext(), selectedCountry + " " + selectedYear,
-                        Toast.LENGTH_SHORT).show();
+                Log.d("<DASHA>", selectedCountry + " " + selectedYear);*/
+                updateChart(false);
             }
 
             @Override

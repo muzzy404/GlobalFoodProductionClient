@@ -15,32 +15,50 @@ import com.android.volley.toolbox.Volley;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DataProvider {
 
     static private final String URL_GET_ALL_COUNTRIES = "allCountries";
     static private final String URL_GET_ALL_YEARS     = "years";
+    static private final String URL_GET_PIE           = "pie";
     static private final String URL = "http://10.20.0.95:8090/";
     //static private final String URL = "http://10.20.0.132:8090/";
 
     private static String[] allCountries = {};
-    //private static String[] allYears     = {"none"};
     //Nika's code
     private static String[] allYears     = {};
     //end N
+    private static String[] pieData;
+    private static Map<String, String> pieDataMap;// = new HashMap<>();
 
     private static final int COUNTRIES = 0;
     private static final int YEARS     = 1;
 
-    static ArrayList<Pair<String, Float>> getPieChartData(String country, boolean firstTime) {
+    static ArrayList<Pair<String, Float>> getPieChartData(String country, String year,
+                                                          boolean firstTime, Context context) {
         ArrayList<Pair<String, Float>> chartData = new ArrayList<>();
 
+        Log.d("<DASHA>", "getPieChartData call");
         if (firstTime) {
             chartData.add(new Pair<String, Float>("No data", 1f));
+            Log.d("<DASHA>", "bublik bardo");
         } else { // TODO: get from server
-            chartData.add(new Pair<String, Float>("One", 1f));
-            chartData.add(new Pair<String, Float>("Two", 2f));
-            chartData.add(new Pair<String, Float>("Five", 5f));
+            String params = "?country=" + country + "&year=" + year;
+            Map<String, String> pieDataMap = getPieDataMap(context, params);
+
+            /*for(Map.Entry<String, String> entry : pieDataMap.entrySet()) {
+                Log.d("<DASHA>", entry.getKey() + " = " + entry.getValue());
+                chartData.add(new Pair<String, Float>(entry.getKey(),
+                        Float.valueOf(entry.getValue())));
+            }*/
+
+            Log.d("<DASHA>", String.valueOf(pieDataMap));
+
+            //chartData.add(new Pair<String, Float>("One", 1f));
+            //chartData.add(new Pair<String, Float>("Two", 2f));
+            //chartData.add(new Pair<String, Float>("Five", 5f));
         }
 
         return chartData;
@@ -54,7 +72,7 @@ public class DataProvider {
                                String url_request, String params,
                                final int which) {
         final String reqString = URL + url_request + params;
-        Toast.makeText(context, "URL: " + reqString, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(context, "URL: " + reqString, Toast.LENGTH_SHORT).show();
 
         StringRequest getRequest = new StringRequest(
                 Request.Method.GET,
@@ -67,7 +85,6 @@ public class DataProvider {
                             case YEARS: {
                                 allYears = tmp.replaceAll("\\[|\\]|\"", "")
                                         .split(",");
-                                Toast.makeText(context, "YEAR GETTED", Toast.LENGTH_SHORT).show();
                             }
                             break;
 
@@ -96,7 +113,7 @@ public class DataProvider {
     }
 
     static ArrayList<String> getCountries() {
-        ArrayList<String> c = new ArrayList<>(Arrays.asList("none"));
+        ArrayList<String> c = new ArrayList<>(/*Arrays.asList("none")*/);
         c.addAll(Arrays.asList(allCountries));
         return c;
     }
@@ -105,6 +122,39 @@ public class DataProvider {
         //Toast.makeText(context, "Start years search", Toast.LENGTH_SHORT).show();
         update(context, URL_GET_ALL_YEARS, params, YEARS);
         return new ArrayList<String>(Arrays.asList(allYears));
+    }
+
+    static Map<String, String> getPieDataMap(Context context, String params) {
+        pieDataMap = new HashMap<>();
+
+        StringRequest getRequest = new StringRequest(
+                Request.Method.GET,
+                URL + URL_GET_PIE + params, //"?country=Angola&year=1900",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        String tmp = response;
+                        pieData = tmp.replaceAll("\\{\"|\"\\}", "")
+                                .split("\",\"");
+                        for(String item : pieData){
+                            String str[] = item.split("\":\"");
+                            pieDataMap.put(str[0], str[1]);
+                        }
+                        Log.d("<NIKA>", String.valueOf(pieDataMap));
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        //txtMessage.setText("ERROR: " + error.toString());
+                        Log.d("<NIKA>", "error");
+                    }
+                });
+
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        requestQueue.add(getRequest);
+
+        return pieDataMap;
     }
 
 }
