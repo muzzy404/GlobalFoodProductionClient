@@ -125,7 +125,8 @@ public class PieFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_pie, container, false);
 
         pieChart = view.findViewById(R.id.pie_chart_view);
-        updateChart(true);
+        //pieChart.clear();
+        //updateChart(true);
 
         countrySpinner = view.findViewById(R.id.countries_spinner_pie);
         yearsSpinner = view.findViewById(R.id.years_spinner_pie);
@@ -155,6 +156,11 @@ public class PieFragment extends Fragment {
                         !selectedYear.equals(NULL_STRING) ||
                         !selectedYear.equals(""))
                     updateChart(false);
+                // Nika's code
+                if (selectedYear.equals(NULL_STRING) || selectedCountry.equals(NULL_STRING))
+                    pieChart.clear();
+
+                // end Nika's code
                 Toast.makeText(getContext(), selectedCountry + " " + selectedYear,
                         Toast.LENGTH_SHORT).show();
             }
