@@ -16,91 +16,46 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.github.mikephil.charting.animation.Easing;
+import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link PieFragment.OnFragmentInteractionListener} interface
+ * {@link GraphFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link PieFragment#newInstance} factory method to
+ * Use the {@link GraphFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PieFragment extends Fragment {
+public class GraphFragment extends Fragment {
 
-    private OnFragmentInteractionListener mListener;
-    private PieChart pieChart;
-
+    private GraphFragment.OnFragmentInteractionListener mListener;
+    private LineChart lineChart;
     private Spinner countrySpinner;
-    private Spinner yearsSpinner;
-
     ArrayAdapter<String> countriesAdapter;
-    ArrayAdapter<String> yearsAdapter;
-
     private final static String NULL_STRING = "none";
-
     private String selectedCountry = NULL_STRING;
-    private String selectedYear = NULL_STRING;
+    private final Integer FIRST_YEAR = 1961;
 
-    public PieFragment() {
-        // Required empty public constructor
+
+    public GraphFragment() {
     }
 
-    public static PieFragment newInstance(String param1, String param2) {
-        PieFragment fragment = new PieFragment();
+    public static GraphFragment newInstance() {
+        GraphFragment fragment = new GraphFragment();
         return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    private void updateChart(boolean first) {
-        // TODO: get from spinner
-        Log.d("Dasha", "update chart");
-        String country = selectedCountry;
-
-        Log.d("<DASHA>", "updateChart");
-        ArrayList<Pair<String, Float>> dataRaw = DataProvider.getPieChartData(country, selectedYear, first, getContext());
-
-        if(dataRaw.isEmpty()) Log.d("<NIKA> : ", "is Empty");
-
-        ArrayList<PieEntry> entries = new ArrayList<>();
-
-        int i = 0;
-        for(Pair<String, Float> item : dataRaw) {
-            entries.add(new PieEntry(item.second, item.first));
-        }
-        PieDataSet pieDataSet = new PieDataSet(entries, "");
-
-        ArrayList<Integer> colors = new ArrayList<Integer>();
-        for(int c : ColorTemplate.COLORFUL_COLORS)
-            colors.add(c);
-        //colors.add(ColorTemplate.getHoloBlue());
-        pieDataSet.setColors(colors);
-
-        PieData data = new PieData(pieDataSet);
-        data.setValueTextColor(Color.WHITE);
-
-        Log.d("Dasha", (pieChart == null ? "NULL" : "OK"));
-        pieChart.getDescription().setEnabled(false);
-        pieChart.setUsePercentValues(true);
-        pieChart.setCenterText(country);
-        pieChart.setCenterTextColor(Color.BLACK);
-
-        pieChart.setHoleRadius(35f);
-        pieChart.setTransparentCircleRadius(40f);
-        pieChart.animateY(1_000, Easing.EasingOption.EaseInOutCubic);
-
-        pieChart.setData(data);
-        pieChart.invalidate();
     }
 
     private void updateCountries() {
@@ -110,39 +65,55 @@ public class PieFragment extends Fragment {
                 DataProvider.getCountries());
         countriesAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         countrySpinner.setAdapter(countriesAdapter);
-        Log.d("<<NIKA>> : ", String.valueOf(DataProvider.getCountries()));
     }
 
-    private void updateYears() {
-        yearsAdapter = new ArrayAdapter<String>(
-                getContext(),
-                android.R.layout.simple_spinner_item,
-                DataProvider.getYears(getContext(), "?country="
-                        + selectedCountry.replaceAll(" ", "_")));
-        yearsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        yearsSpinner.setAdapter(yearsAdapter);
+    private void updateGraph() {
+        String country = selectedCountry;
+        ArrayList<String> dataY =
+                DataProvider.getGraphData(country, getContext());
+
+        Log.d("<NIKA> : ", String.valueOf(dataY));
+        if (dataY.isEmpty()) {
+            Log.d("<NIKA> : ", "is Empty");
+            dataY.add("100");
+        }
+
+        List<Entry> entries = new ArrayList<Entry>();
+
+        Integer dataX = FIRST_YEAR;
+        for (String data : dataY) {
+            entries.add(new Entry(dataX++, Float.valueOf(data)));
+        }
+
+        LineDataSet dataSet = new LineDataSet(entries, "Label");
+
+        LineData lineData = new LineData(dataSet);
+        lineChart.setData(lineData);
+        lineChart.invalidate(); // refresh
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_pie, container, false);
+        View view = inflater.inflate(R.layout.fragment_graph, container, false);
 
-        pieChart = view.findViewById(R.id.pie_chart_view);
+        lineChart = view.findViewById(R.id.graph_chart_view);
+        countrySpinner = view.findViewById(R.id.countries_spinner_graph);
 
-        countrySpinner = view.findViewById(R.id.countries_spinner_pie);
-        yearsSpinner = view.findViewById(R.id.years_spinner_pie);
-
-        updateYears();
         updateCountries();
-        updateChart(false);
+        updateGraph();
 
         countrySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 selectedCountry = adapterView.getItemAtPosition(i).toString();
-                updateYears();
+                updateGraph();
                 Toast.makeText(getContext(), adapterView.getItemAtPosition(i).toString(),
                         Toast.LENGTH_SHORT).show();
             }
@@ -153,21 +124,9 @@ public class PieFragment extends Fragment {
             }
         });
 
-        yearsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedYear = adapterView.getItemAtPosition(i).toString();
-                updateChart(false);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
         return view;
     }
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -184,7 +143,7 @@ public class PieFragment extends Fragment {
         } else {
             /*throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");*/
-            //Toast.makeText(context, "Pie fragment on attach", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "Map fragment on attach", Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Global food production</string>
 
-    <string name="nav_map_chart">Map distribution</string>
+    <string name="nav_line_chart">Line distribution</string>
     <string name="nav_pie_chart">Country distribution</string>
 
     <string name="title_refresh">Refresh</string>

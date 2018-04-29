@@ -1,6 +1,5 @@
 package com.spbpu.hackaton.globalfoodproductionclient;
 
-import android.app.FragmentManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.FragmentTransaction;
@@ -31,8 +30,8 @@ public class MainActivity extends AppCompatActivity {
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
                 switch (item.getItemId()) {
 
-                    case(R.id.map_chart_item):
-                        transaction.replace(R.id.content, new MapFragment()).commit();
+                    case(R.id.line_chart_item):
+                        transaction.replace(R.id.content, new GraphFragment()).commit();
                         return true;
                     case(R.id.pie_chart_item):
                         transaction.replace(R.id.content, new PieFragment()).commit();
@@ -42,8 +41,10 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-        btmNavigation.setSelectedItemId(R.id.map_chart_item);
-        DataProvider.updateCountries(this);
+        btmNavigation.setSelectedItemId(R.id.line_chart_item);
+
+        DataProvider.setDefault(this);
+
     }
 
     @Override
