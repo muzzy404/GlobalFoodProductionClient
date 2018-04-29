@@ -24,7 +24,10 @@ public class DataProvider {
     //static private final String URL = "http://10.20.0.132:8090/";
 
     private static String[] allCountries = {};
-    private static String[] allYears     = {"none"};
+    //private static String[] allYears     = {"none"};
+    //Nika's code
+    private static String[] allYears     = {};
+    //end N
 
     private static final int COUNTRIES = 0;
     private static final int YEARS     = 1;

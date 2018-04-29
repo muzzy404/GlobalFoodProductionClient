@@ -45,7 +45,9 @@ public class PieFragment extends Fragment {
 
     private final static String NULL_STRING = "none";
 
-    private String selectedCountry = "Select country and year";
+    //private String selectedCountry = "Select country and year";
+    //private String selectedYear = NULL_STRING;
+    private String selectedCountry = "Albania";
     private String selectedYear = NULL_STRING;
 
     public PieFragment() {
@@ -131,7 +133,15 @@ public class PieFragment extends Fragment {
         countrySpinner = view.findViewById(R.id.countries_spinner_pie);
         yearsSpinner = view.findViewById(R.id.years_spinner_pie);
 
+        //Nika's code
+        updateYears();
         updateCountries();
+        Toast.makeText(getContext(), "NIKA : update C",
+                Toast.LENGTH_SHORT).show();
+        updateYears();
+        Toast.makeText(getContext(), "NIKA : update Y",
+                Toast.LENGTH_SHORT).show();
+        //end of Nika's code
 
         countrySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
