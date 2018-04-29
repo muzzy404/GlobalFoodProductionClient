@@ -99,6 +99,7 @@ public class GraphFragment extends Fragment {
         lineChart.setDrawBorders(false);
         lineChart.getLegend().setEnabled(false);
         lineChart.setBackgroundColor(getResources().getColor(R.color.colorWhite));
+        lineChart.getDescription().setEnabled(false);
 
         lineChart.setData(lineData);
         lineChart.invalidate(); // refresh
