@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public class DataProvider {
 
@@ -36,11 +37,14 @@ public class DataProvider {
     private static final int YEARS = 1;
     private static final int PIE = 2;
     private static final int GRAPH = 3;
+    private static final String DEFAULT_COUNTRY = "?country=" + "Afghanistan";
+    private static final String DEFAULT_YEAR = "&year=" + "1961";
 
     static void setDefault(Context context) {
         updateCountries(context);
         updateYears(context);
         updateGraphData(context);
+        updatePieData(context);
     }
 
     static void updateCountries(Context context) {
@@ -48,100 +52,85 @@ public class DataProvider {
     }
 
     static void updateYears(Context context) {
-        String params = "?country=" + "Afghanistan";
+        String params = DEFAULT_COUNTRY;
         update(context, URL_GET_ALL_YEARS, params, YEARS);
     }
 
     static void updateGraphData(Context context) {
-        String params = "?country=" + "Afghanistan";
+        String params = DEFAULT_COUNTRY;
         update(context, URL_GET_GRAPH, params, GRAPH);
+    }
+
+    static void updatePieData(Context context) {
+        String params = DEFAULT_COUNTRY + DEFAULT_YEAR;
+        update(context, URL_GET_PIE, params, PIE);
     }
 
     static private void update(final Context context,
                                String url_request, String params,
                                final int which) {
-        //final ResponseCallback responseCallback) {
-        final String reqString = URL + url_request + params;
-        //Toast.makeText(context, "URL: " + reqString, Toast.LENGTH_SHORT).show();
 
-        StringRequest getRequest = new StringRequest(
-                Request.Method.GET,
-                reqString,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        //if (responseCallback != null)
-                        String tmp = response;
-                        switch (which) {
-                            case YEARS: {
-                                allYears = tmp.replaceAll("\\[|\\]|\"", "")
-                                        .split(",");
-                            }
-                            break;
+        final String myUrl = URL + url_request + params;
+        String result = "";
+        HttpGetRequest getRequest_ = new HttpGetRequest();
 
-                            case COUNTRIES: {
-                                allCountries = tmp.replaceAll("\\[\"|\"\\]", "")
-                                        .split("\",\"");
-                            }
-                            break;
+        try {
+            result = getRequest_.execute(myUrl).get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        switch (which) {
+            case YEARS: {
+                allYears = result.replaceAll("\\[|\\]|\"", "")
+                        .split(",");
+            }
+            break;
 
-                            case PIE: {
-                                pieData = response.replaceAll("\\{\"|\"\\}", "")
-                                        .split("\",\"");
-                            }
-                            break;
-                            case GRAPH: {
-                                graphData = response.replaceAll("\\[\"|\"\\]", "")
-                                        .split("\",\"");
-                            }
-                            break;
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.d("REQUEST ERROR: ", error.toString());
-                    }
-                });
+            case COUNTRIES: {
+                allCountries = result.replaceAll("\\[\"|\"\\]", "")
+                        .split("\",\"");
+            }
+            break;
 
-        RequestQueue requestQueue = Volley.newRequestQueue(context);
-        getRequest.setRetryPolicy(new DefaultRetryPolicy(
-                10_000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        requestQueue.add(getRequest);
+            case PIE: {
+                Log.d("<ALENA> : ", result);
+                pieData = result.replaceAll("\\{\"|\"\\}", "")
+                        .split("\",\"");
+                Log.d("<ALENA> : ", pieData[0]);
+            }
+            break;
+            case GRAPH: {
+                graphData = result.replaceAll("\\[\"|\"\\]", "")
+                        .split("\",\"");
+            }
+            break;
+        }
     }
 
     static ArrayList<String> getCountries() {
-        ArrayList<String> c = new ArrayList<>(/*Arrays.asList("none")*/);
+        ArrayList<String> c = new ArrayList<>();
         c.addAll(Arrays.asList(allCountries));
         return c;
     }
 
     static ArrayList<String> getYears(Context context, String params) {
-        //Toast.makeText(context, "Start years search", Toast.LENGTH_SHORT).show();
         update(context, URL_GET_ALL_YEARS, params, YEARS);
         return new ArrayList<String>(Arrays.asList(allYears));
     }
 
-    static ArrayList<Pair<String, Float>> getPieChartData(String country, String year,
-                                                          boolean firstTime, Context context) {
+    static ArrayList<Pair<String, Float>> getPieChartData(String country, String year, Context context) {
+
         ArrayList<Pair<String, Float>> chartData = new ArrayList<>();
+        String params = "?country=" + country.replaceAll(" ", "_") + "&year=" + year;
+        update(context, URL_GET_PIE, params, PIE);
 
-        if (firstTime) {
-            chartData.add(new Pair<String, Float>("No data", 1f));
-        } else { // TODO: get from server
-            String params = "?country=" + country.replaceAll(" ", "_")
-                    + "&year=" + year;
-            update(context, URL_GET_PIE, params, PIE);
-
-            for (String item : pieData) {
-                String str[] = item.split("\":\"");
-                chartData.add(new Pair<String, Float>(str[0], Float.valueOf(str[1])));
-            }
+        Log.d("<---ALENA---> : ", "");
+        for (String item : pieData) {
+            String str[] = item.split("\":\"");
+            chartData.add(new Pair<String, Float>(str[0], Float.valueOf(str[1])));
         }
-
         return chartData;
     }
 

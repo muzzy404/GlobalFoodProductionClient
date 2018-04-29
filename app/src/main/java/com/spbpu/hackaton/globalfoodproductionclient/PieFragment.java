@@ -44,10 +44,13 @@ public class PieFragment extends Fragment {
     ArrayAdapter<String> countriesAdapter;
     ArrayAdapter<String> yearsAdapter;
 
+    private static final String DEFAULT_COUNTRY = "Afghanistan";
+    private static final String DEFAULT_YEAR = "1961";
+
     private final static String NULL_STRING = "none";
 
-    private String selectedCountry = NULL_STRING;
-    private String selectedYear = NULL_STRING;
+    private String selectedCountry = DEFAULT_COUNTRY;
+    private String selectedYear = DEFAULT_YEAR;
 
     public PieFragment() {
         // Required empty public constructor
@@ -63,13 +66,13 @@ public class PieFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
-    private void updateChart(boolean first) {
-        // TODO: get from spinner
+    private void updateChart() {
         Log.d("Dasha", "update chart");
         String country = selectedCountry;
 
         Log.d("<DASHA>", "updateChart");
-        ArrayList<Pair<String, Float>> dataRaw = DataProvider.getPieChartData(country, selectedYear, first, getContext());
+        ArrayList<Pair<String, Float>> dataRaw = DataProvider.getPieChartData(country,
+                selectedYear, getContext());
 
         if(dataRaw.isEmpty()) Log.d("<NIKA> : ", "is Empty");
 
@@ -139,7 +142,7 @@ public class PieFragment extends Fragment {
 
         updateYears();
         updateCountries();
-        updateChart(false);
+        updateChart();
 
         countrySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -160,7 +163,7 @@ public class PieFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 selectedYear = adapterView.getItemAtPosition(i).toString();
-                updateChart(false);
+                updateChart();
             }
 
             @Override
