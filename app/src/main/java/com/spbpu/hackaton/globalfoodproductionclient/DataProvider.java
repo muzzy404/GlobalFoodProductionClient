@@ -35,6 +35,7 @@ public class DataProvider {
 
     private static final int COUNTRIES = 0;
     private static final int YEARS     = 1;
+    private static final int PIE       = 2;
 
     static ArrayList<Pair<String, Float>> getPieChartData(String country, String year,
                                                           boolean firstTime, Context context) {
@@ -46,7 +47,23 @@ public class DataProvider {
             Log.d("<DASHA>", "bublik bardo");
         } else { // TODO: get from server
             String params = "?country=" + country + "&year=" + year;
-            Map<String, String> pieDataMap = getPieDataMap(context, params);
+            //Map<String, String> pieDataMap =
+            //getPieDataMap(context, params);
+            update(context, URL_GET_PIE, params, PIE);
+
+            //
+            if (pieData == null) {
+                return chartData;
+            }
+
+            for(String item : pieData){
+                String str[] = item.split("\":\"");
+                chartData.add(new Pair<String, Float>(str[0],Float.valueOf(str[1])));
+                Log.d("<NIKA>", str[0] + " " + str[1]);
+                //pieDataMap.put(str[0], str[1]);
+            }
+
+            //
 
             /*for(Map.Entry<String, String> entry : pieDataMap.entrySet()) {
                 Log.d("<DASHA>", entry.getKey() + " = " + entry.getValue());
@@ -93,6 +110,12 @@ public class DataProvider {
                                         .split("\",\"");
                             }
                             break;
+
+                            case PIE: {
+                                pieData = response.replaceAll("\\{\"|\"\\}", "")
+                                        .split("\",\"");
+                            }
+                            break;
                         }
                     }
                 },
@@ -133,14 +156,14 @@ public class DataProvider {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        String tmp = response;
-                        pieData = tmp.replaceAll("\\{\"|\"\\}", "")
+                        Log.d("<N> : ", "request");
+                        pieData = response.replaceAll("\\{\"|\"\\}", "")
                                 .split("\",\"");
-                        for(String item : pieData){
-                            String str[] = item.split("\":\"");
-                            pieDataMap.put(str[0], str[1]);
-                        }
-                        Log.d("<NIKA>", String.valueOf(pieDataMap));
+//                        for(String item : pieData){
+//                            String str[] = item.split("\":\"");
+//                            pieDataMap.put(str[0], str[1]);
+//                        }
+//                        Log.d("<NIKA>", String.valueOf(pieDataMap));
                     }
                 },
                 new Response.ErrorListener() {
